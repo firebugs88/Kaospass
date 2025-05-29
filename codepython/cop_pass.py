@@ -180,7 +180,7 @@ if __name__ == "__main__":
 
     root = tk.Tk()
     root.title("Generador de Contraseñas Kaospass")
-    root.geometry("400x230") # Ajustado para más espacio
+    root.geometry("400x200") # Ajustado para más espacio
     root.configure(bg=COLOR_PRIMARY_BG)
 
     frame = tk.Frame(root, bg=COLOR_PRIMARY_BG)
