@@ -5,6 +5,7 @@ import string
 import os
 from typing import List
 
+# Definición de excepciones personalizadas
 class FileSavingError(Exception):
     """Excepción personalizada para errores durante el guardado de archivos."""
     pass
