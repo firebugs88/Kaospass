@@ -19,7 +19,7 @@ def _secure_shuffle(lst: List[str]) -> None:
         lst[i], lst[j] = lst[j], lst[i]
 DEFAULT_PASSWORD_FILE = os.path.join(os.path.expanduser("~"), "Desktop", "kaospass_passwords.txt")
 
-def generate_password_and_save(length: int = 12,
+def generate_password_and_save(length: int = 10,
                                file_name: str = DEFAULT_PASSWORD_FILE,
                                min_lower: int = 1,
                                min_upper: int = 1,
