@@ -4,7 +4,7 @@ import secrets
 import string
 import os
 from typing import List
-
+from colors import *
 # Definición de excepciones personalizadas
 class FileSavingError(Exception):
     """Excepción personalizada para errores durante el guardado de archivos."""
@@ -20,7 +20,7 @@ def _secure_shuffle(lst: List[str]) -> None:
         lst[i], lst[j] = lst[j], lst[i]
 DEFAULT_PASSWORD_FILE = os.path.join(os.path.expanduser("~"), "Desktop", "kaospass_passwords.txt")
 
-def generate_password_and_save(length: int = 12,
+def generate_password_and_save(length: int = 10,
                                file_name: str = DEFAULT_PASSWORD_FILE,
                                min_lower: int = 1,
                                min_upper: int = 1,
@@ -161,23 +161,8 @@ def gui_handle_generate_password(root_window: tk.Tk, display_widget: tk.Text, st
     except Exception as e:
         messagebox.showerror("Error Inesperado", f"Ocurrió un error general: {str(e)}", parent=root_window)
         status_label.config(text="Error inesperado.", fg=STATUS_ERROR_FG)
-
+        
 if __name__ == "__main__":
-    # --- Definición de Colores para la UI ---
-    COLOR_PRIMARY_BG = "#2E3B4E"       # Gris oscuro azulado para el fondo principal
-    COLOR_SECONDARY_BG = "#3A4759"     # Gris un poco más claro para frames
-    COLOR_TEXT_FG = "#F0F0F0"          # Blanco/Gris muy claro para texto general
-    COLOR_ACCENT = "#007ACC"           # Azul para botones y acentos
-    COLOR_BUTTON_FG = "#FFFFFF"        # Blanco para texto de botones
-    COLOR_TEXT_WIDGET_BG = "#252526"   # Fondo para el campo de texto (similar a VSCode)
-    COLOR_TEXT_WIDGET_BORDER = COLOR_ACCENT # Borde del campo de texto
-
-    STATUS_READY_FG = "#B0B0B0"
-    STATUS_SUCCESS_FG = "#77DD77"      # Verde pastel
-    STATUS_INFO_FG = "#89CFF0"         # Azul bebé
-    STATUS_WARNING_FG = "#FFBF00"      # Ámbar
-    STATUS_ERROR_FG = "#FF6961"        # Rojo pastel
-    # --- Fin Definición de Colores ---
 
     root = tk.Tk()
     root.title("Generador de Contraseñas Kaospass")
