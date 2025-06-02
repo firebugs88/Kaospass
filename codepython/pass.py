@@ -27,102 +27,57 @@ def generate_password_and_save(length: int = 10,
                                min_upper: int = 1,
                                min_digits: int = 3,
                                min_punctuation: int = 1) -> str:
-    """
-    Genera una contraseña aleatoria de la longitud dada que cumple con los requisitos
-    de caracteres especificados (minúsculas, mayúsculas, dígitos, puntuación).
-    Guarda la contraseña generada en la ruta de archivo dada, creando el directorio
-    si no existe.
-
-    Parámetros:
-    - length (int): La longitud de la contraseña a generar. Por defecto 12.
-    - file_name (str): La ruta del archivo para guardar la contraseña generada.
-                       Por defecto "~/Desktop/kaospass_passwords.txt".
-    - min_lower (int): Número mínimo de caracteres en minúscula. Por defecto 1.
-    - min_upper (int): Número mínimo de caracteres en mayúscula. Por defecto 1.
-    - min_digits (int): Número mínimo de dígitos. Por defecto 3.
-    - min_punctuation (int): Número mínimo de signos de puntuación. Por defecto 1.
-
-    Devuelve:
-    str: La cadena de contraseña generada.
-
-    Lanza:
-    - ValueError: Si la longitud especificada es demasiado corta para cumplir
-                  con los requisitos mínimos de caracteres.
-    """
-    lower_chars = string.ascii_lowercase
-    upper_chars = string.ascii_uppercase
-    digit_chars = string.digits
-    punctuation_chars = string.punctuation  # Se añaden signos de puntuación
     
-    # Alfabeto completo para rellenar los caracteres restantes
-    all_chars = lower_chars + upper_chars + digit_chars + punctuation_chars
-
+    char_types = {
+        string.ascii_lowercase: min_lower,
+        string.ascii_uppercase: min_upper,
+        string.digits: min_digits,
+        string.punctuation: min_punctuation
+    }
     # Verificar si la longitud es suficiente
-    required_char_count = min_lower + min_upper + min_digits + min_punctuation
+    required_char_count = sum(char_types.values())
     if length < required_char_count:
-        raise ValueError(
-            f"La longitud de la contraseña ({length}) es demasiado corta. "
-            f"Se requiere una longitud mínima de {required_char_count} para incluir "
-            f"todos los tipos de caracteres especificados (minúsculas: {min_lower}, "
-            f"mayúsculas: {min_upper}, dígitos: {min_digits}, puntuación: {min_punctuation})."
-        )
+        raise ValueError(f"La longitud de la contraseña ({length}) es demasiado corta.")
 
-    password_chars = []
-
-    # 1. Asegurar el número mínimo de cada tipo de carácter
-    for _ in range(min_lower):
-        password_chars.append(secrets.choice(lower_chars))
-    for _ in range(min_upper):
-        password_chars.append(secrets.choice(upper_chars))
-    for _ in range(min_digits):
-        password_chars.append(secrets.choice(digit_chars))
-    for _ in range(min_punctuation):
-        password_chars.append(secrets.choice(punctuation_chars))
-
-    # 2. Rellenar el resto de la contraseña con caracteres aleatorios del conjunto completo
+    password_chars = [secrets.choice(chars) for chars, count in char_types.items() for _ in range(count)]
     remaining_length = length - len(password_chars)
-    for _ in range(remaining_length):
-        password_chars.append(secrets.choice(all_chars))
+    all_chars = ''.join(char_types.keys())
+    password_chars.extend(secrets.choice(all_chars) for _ in range(remaining_length))
 
-    # 3. Mezclar la lista de caracteres de forma segura para evitar patrones predecibles
     _secure_shuffle(password_chars)
-    password = "".join(password_chars)
+    password = ''.join(password_chars)
 
-    # 4. Guardar la contraseña en el archivo
     try:
-        # Asegurar que el directorio de destino exista
-        dir_path = os.path.dirname(file_name)
-        if dir_path:  # Solo crear si hay una ruta de directorio (evita problemas con nombres de archivo sin ruta)
-            os.makedirs(dir_path, exist_ok=True)
-        
-        with open(file_name, "a") as file:  # Se mantiene el modo 'append' (añadir)
+        os.makedirs(os.path.dirname(file_name), exist_ok=True)
+        with open(file_name, "a") as file:
             file.write(password + "\n")
-        # La retroalimentación de éxito ahora la maneja la GUI
     except OSError as e:
-        error_message = (
-            f"Error al intentar guardar la contraseña en '{file_name}'.\n"
-            f"Causa: {e.__class__.__name__} - {e}.\n"
-            "Verifique que la ruta es válida y que tiene permisos de escritura."
-        )
-        raise FileSavingError(error_message) from e
-    except Exception as e: # Captura genérica para otros errores inesperados durante el guardado
-        raise FileSavingError(f"Un error inesperado ocurrió al guardar la contraseña: {e}") from e
-            
+        raise FileSavingError(f"Error al guardar la contraseña: {e}") from e
+
     return password
+
+def update_display_widget(widget: tk.Text, text: str, state: str = tk.DISABLED):
+    widget.config(state=tk.NORMAL)
+    widget.delete("1.0", tk.END)
+    widget.insert(tk.END, text)
+    widget.config(state=state)
+
+def update_status_label(label: tk.Label, text: str, color: str):
+    label.config(text=text, fg=color)
 
 def copy_to_clipboard(root_window: tk.Tk, text_to_copy: str, status_label: tk.Label):
     """Copia el texto dado al portapapeles y actualiza la etiqueta de estado."""
     try:
         text_to_copy = text_to_copy.strip()
         if not text_to_copy or text_to_copy == "Error al generar." or text_to_copy == "Error al guardar.":
-            status_label.config(text="Nada válido para copiar.", fg=STATUS_WARNING_FG)
+            update_status_label(status_label, "Nada válido para copiar.", STATUS_WARNING_FG)
             return
 
         root_window.clipboard_clear()
         root_window.clipboard_append(text_to_copy)
-        status_label.config(text="¡Contraseña copiada al portapapeles!", fg=STATUS_INFO_FG)
+        update_status_label(status_label, "¡Contraseña copiada al portapapeles!", STATUS_INFO_FG)
     except tk.TclError:
-        status_label.config(text="Error al copiar (portapapeles no accesible).", fg=STATUS_ERROR_FG)
+        update_status_label(status_label, "Error al copiar (portapapeles no accesible).", STATUS_ERROR_FG)
         messagebox.showerror("Error al Copiar", "No se pudo acceder al portapapeles.", parent=root_window)
 
 def gui_handle_generate_password(root_window: tk.Tk, display_widget: tk.Text, status_label: tk.Label):

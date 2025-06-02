@@ -12,4 +12,11 @@ STATUS_SUCCESS_FG = "#77DD77"      # Verde pastel
 STATUS_INFO_FG = "#89CFF0"         # Azul bebé
 STATUS_WARNING_FG = "#FFBF00"      # Ámbar
 STATUS_ERROR_FG = "#FF6961"        # Rojo pastel
-# --- Fin Definición de Colores ---
+
+# Python
+COLORS = {
+    "primary_bg": "#FFFFFF",
+    "text_fg": "#000000",
+    "accent": "#005C99",
+    # Otros colores...
+}
