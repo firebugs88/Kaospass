@@ -20,7 +20,7 @@ def _secure_shuffle(lst: List[str]) -> None:
         lst[i], lst[j] = lst[j], lst[i]
 DEFAULT_PASSWORD_FILE = os.path.join(os.path.expanduser("~"), "Desktop", "kaospass_passwords.txt")
 
-def generate_password_and_save(length: int = 12,
+def generate_password_and_save(length: int = 10,
                                file_name: str = DEFAULT_PASSWORD_FILE,
                                min_lower: int = 1,
                                min_upper: int = 1,
@@ -162,8 +162,9 @@ def gui_handle_generate_password(root_window: tk.Tk, display_widget: tk.Text, st
         messagebox.showerror("Error Inesperado", f"Ocurrió un error general: {str(e)}", parent=root_window)
         status_label.config(text="Error inesperado.", fg=STATUS_ERROR_FG)
 
-
-
+if __name__ == "__main__":
+    
+    # Crear la ventana principal
     root = tk.Tk()
     root.title("Generador de Contraseñas Kaospass")
     root.geometry("400x200") # Ajustado para más espacio
