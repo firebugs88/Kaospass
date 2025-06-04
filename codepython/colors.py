@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# --- Definición de Fuentes ---
+FONT_FAMILY_PRIMARY = "Segoe UI" # Fuente principal moderna (común en Windows)
+FONT_FAMILY_FALLBACK = "Arial"    # Fuente de respaldo si la primaria no está
+FONT_SIZE_NORMAL = 8
+FONT_SIZE_SMALL = 8                   # Tamaño de fuente para la UI
 
 # --- Definición de Colores para la UI ---
 COLOR_PRIMARY_BG = "#2E3B4E"       # Gris oscuro azulado para el fondo principal
