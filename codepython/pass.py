@@ -164,18 +164,27 @@ def gui_handle_generate_password(root_window: tk.Tk, display_widget: tk.Text, st
 
 if __name__ == "__main__":
     
+
     # Crear la ventana principal
     root = tk.Tk()
     root.title("Generador de Contraseñas Kaospass")
-    root.geometry("400x200") # Ajustado para más espacio
+    root.geometry("340x160") # Ajustado para más espacio
     root.configure(bg=COLOR_PRIMARY_BG)
 
     frame = tk.Frame(root, bg=COLOR_PRIMARY_BG)
     frame.pack(padx=15, pady=15, fill=tk.BOTH, expand=True)
 
-    password_label = tk.Label(frame, text="Contraseña Generada:", fg=COLOR_TEXT_FG, bg=COLOR_PRIMARY_BG)
-    password_label.pack(pady=(0,2))
+    # Intenta usar la fuente primaria, si falla, usa la de respaldo
+    try:
+        root.tk.call('font', 'metrics', f'{FONT_FAMILY_PRIMARY} {FONT_SIZE_NORMAL}') # Prueba si la fuente existe
+        APP_FONT = (FONT_FAMILY_PRIMARY, FONT_SIZE_NORMAL)
+        APP_FONT_SMALL = (FONT_FAMILY_PRIMARY, FONT_SIZE_SMALL)
+    except tk.TclError:
+        APP_FONT = (FONT_FAMILY_FALLBACK, FONT_SIZE_NORMAL)
+        APP_FONT_SMALL = (FONT_FAMILY_FALLBACK, FONT_SIZE_SMALL)
 
+    password_label = tk.Label(frame, text="Contraseña Generada:", fg=COLOR_TEXT_FG, bg=COLOR_PRIMARY_BG, font=APP_FONT)
+    password_label.pack(pady=(0,2))
     password_display = tk.Text(frame, width=30, height=1,
                                 relief=tk.SOLID, borderwidth=1,
                                 bg=COLOR_TEXT_WIDGET_BG, fg=COLOR_TEXT_FG,
@@ -183,27 +192,28 @@ if __name__ == "__main__":
                                 highlightcolor=COLOR_TEXT_WIDGET_BORDER,    # Color del borde cuando está enfocado (menos relevante si está DISABLED)
                                 highlightthickness=1,
                                 insertbackground=COLOR_TEXT_FG) # Color del cursor (si fuera editable)
+    password_display.configure(font=APP_FONT)
     password_display.pack(pady=(0,10))
     password_display.config(state=tk.DISABLED) # Inicia deshabilitado (solo lectura)
 
     button_frame = tk.Frame(frame)
     button_frame.pack(pady=5)
 
-    status_label = tk.Label(frame, text="Listo.", font=("Arial", 9), fg=STATUS_READY_FG, bg=COLOR_PRIMARY_BG)
+    status_label = tk.Label(frame, text="Listo.", font=APP_FONT_SMALL, fg=STATUS_READY_FG, bg=COLOR_PRIMARY_BG)
     status_label.pack(pady=(5,0))
 
     generate_button = tk.Button(button_frame, text="Generar Nueva Contraseña",
                                 command=lambda: gui_handle_generate_password(root, password_display, status_label),
                                 bg=COLOR_ACCENT, fg=COLOR_BUTTON_FG,
                                 relief=tk.FLAT, activebackground="#005C99", activeforeground=COLOR_BUTTON_FG,
-                                borderwidth=0, highlightthickness=0,
+                                borderwidth=0, highlightthickness=0, font=APP_FONT,
                                 padx=10, pady=5)
     generate_button.pack(side=tk.LEFT, padx=5)
 
     copy_button = tk.Button(button_frame, text="Copiar al Portapapeles",
                             command=lambda: copy_to_clipboard(root, password_display.get("1.0", tk.END), status_label),
                             bg=COLOR_ACCENT, fg=COLOR_BUTTON_FG,
-                            relief=tk.FLAT, activebackground="#005C99", activeforeground=COLOR_BUTTON_FG,
+                            relief=tk.FLAT, activebackground="#005C99", activeforeground=COLOR_BUTTON_FG, font=APP_FONT,
                             borderwidth=0, highlightthickness=0,
                             padx=10, pady=5)
     copy_button.pack(side=tk.LEFT, padx=5)
