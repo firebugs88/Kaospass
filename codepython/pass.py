@@ -65,6 +65,44 @@ def update_display_widget(widget: tk.Text, text: str, state: str = tk.DISABLED):
 def update_status_label(label: tk.Label, text: str, color: str):
     label.config(text=text, fg=color)
 
+class ToolTip:
+    """Tooltip para mostrar ayuda en botones de iconos."""
+    def __init__(self, widget, text):
+        self.widget = widget
+        self.text = text
+        self.tooltip_window = None
+        self.widget.bind("<Enter>", self.show_tooltip)
+        self.widget.bind("<Leave>", self.hide_tooltip)
+    
+    def show_tooltip(self, event=None):
+        if self.tooltip_window or not self.text:
+            return
+        x, y, _, _ = self.widget.bbox("insert")
+        x = x + self.widget.winfo_rootx() + 25
+        y = y + self.widget.winfo_rooty() + 25
+        
+        self.tooltip_window = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry(f"+{x}+{y}")
+        
+        label = tk.Label(
+            tw, 
+            text=self.text, 
+            justify=tk.LEFT,
+            background="#2E3B4E", 
+            foreground="#F0F0F0",
+            relief=tk.SOLID, 
+            borderwidth=1,
+            font=("Arial", 8)
+        )
+        label.pack(ipadx=3, ipady=2)
+    
+    def hide_tooltip(self, event=None):
+        tw = self.tooltip_window
+        self.tooltip_window = None
+        if tw:
+            tw.destroy()
+
 class NotificationBanner:
     def __init__(self, parent):
         self.parent = parent
@@ -234,7 +272,7 @@ if __name__ == "__main__":
     # Configuración minimalista de la ventana
     root = tk.Tk()
     root.title("Kaospass")
-    root.geometry("250x160")
+    root.geometry("280x160")
     root.configure(bg=COLOR_PRIMARY_BG)
     root.resizable(False, False)
     
@@ -281,41 +319,44 @@ if __name__ == "__main__":
     button_frame = tk.Frame(main_frame, bg=COLOR_PRIMARY_BG)
     button_frame.pack(pady=(0, 10))
     
+    # Botones de iconos compactos
     generate_button = tk.Button(
         button_frame, 
         text="🔄",
         command=lambda: gui_handle_generate_password_compact(root, password_display, status_label, notification_banner),
-        bg=COLOR_ACCENT, 
-        fg=COLOR_BUTTON_FG,
-        font=("Arial", 9, "bold"),
+        bg=COLOR_PRIMARY_BG, 
+        fg=COLOR_TEXT_FG,
+        font=("Arial", 14),
         relief=tk.FLAT, 
-        activebackground="#005C99", 
-        activeforeground=COLOR_BUTTON_FG,
+        activebackground=COLOR_SECONDARY_BG, 
+        activeforeground=COLOR_ACCENT,
         borderwidth=0, 
         highlightthickness=0,
-        padx=10, 
-        pady=6,
+        width=3,
+        height=1,
         cursor="hand2"
     )
-    generate_button.pack(side=tk.LEFT, padx=(0, 10))
+    generate_button.pack(side=tk.LEFT, padx=(0, 8))
+    ToolTip(generate_button, "Generar nueva contraseña")
     
     copy_button = tk.Button(
         button_frame, 
         text="📋",
         command=lambda: copy_to_clipboard_compact(root, password_display.get(), status_label),
-        bg=COLOR_SECONDARY_BG, 
+        bg=COLOR_PRIMARY_BG, 
         fg=COLOR_TEXT_FG,
-        font=("Arial", 9),
+        font=("Arial", 14),
         relief=tk.FLAT, 
-        activebackground="#4A5A6D", 
-        activeforeground=COLOR_TEXT_FG,
-        borderwidth=1,
+        activebackground=COLOR_SECONDARY_BG, 
+        activeforeground=COLOR_ACCENT,
+        borderwidth=0,
         highlightthickness=0,
-        padx=15, 
-        pady=6,
+        width=3,
+        height=1,
         cursor="hand2"
     )
     copy_button.pack(side=tk.LEFT)
+    ToolTip(copy_button, "Copiar al portapapeles")
     
     # Estado minimalista
     status_label = tk.Label(
