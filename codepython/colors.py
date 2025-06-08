@@ -1,7 +1,7 @@
 # --- Definición de Colores para la UI ---
 COLOR_PRIMARY_BG = "#2E3B4E"       # Gris oscuro azulado para el fondo principal
 COLOR_SECONDARY_BG = "#3A4759"     # Gris un poco más claro para frames
-COLOR_TEXT_FG = "#F0F0F0"          # Blanco/Gris muy claro para texto general
+COLOR_TEXT_FG = "#e28743"          # Blanco/Gris muy claro para texto general
 COLOR_ACCENT = "#007ACC"           # Azul para botones y acentos
 COLOR_BUTTON_FG = "#FFFFFF"        # Blanco para texto de botones
 COLOR_TEXT_WIDGET_BG = "#252526"   # Fondo para el campo de texto (similar a VSCode)
