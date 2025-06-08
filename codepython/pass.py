@@ -4,7 +4,20 @@ import secrets
 import string
 import os
 from typing import List
+import platform
 from colors import *
+
+
+
+
+if platform.system() == "Darwin":
+    background_color = "#F0F0F0"  # Color de fondo claro para macOS
+    foreground_color = "#000000"  # Color de texto oscuro para macOS
+else:
+    background_color = "#2E3B4E"
+    foreground_color = "#F0F0F0"  # Color de texto claro para otros sistemas
+
+offset = 25 if platform.system() != "Darwin" else 15  # Ajusta el desplazamiento en macOS
 
 
 class FileSavingError(Exception):
@@ -319,40 +332,37 @@ if __name__ == "__main__":
     button_frame = tk.Frame(main_frame, bg=COLOR_PRIMARY_BG)
     button_frame.pack(pady=(0, 10))
     
-    # Botones de iconos compactos
+    # Botón para generar nueva contraseña (solo ícono)
     generate_button = tk.Button(
         button_frame, 
-        text="🔄",
+        text="New",
         command=lambda: gui_handle_generate_password_compact(root, password_display, status_label, notification_banner),
-        bg=COLOR_PRIMARY_BG, 
+        bg=COLOR_PRIMARY_BG,  # Fondo igual al fondo de la interfaz
         fg=COLOR_TEXT_FG,
         font=("Arial", 14),
-        relief=tk.FLAT, 
-        activebackground=COLOR_SECONDARY_BG, 
-        activeforeground=COLOR_ACCENT,
-        borderwidth=0, 
-        highlightthickness=0,
-        width=3,
-        height=1,
+        relief=tk.FLAT,  # Sin relieve
+        activebackground=COLOR_PRIMARY_BG,  # Fondo activo igual al fondo de la interfaz
+        activeforeground=COLOR_BUTTON_FG,
+        borderwidth=0,  # Sin bordes
+        highlightthickness=0,  # Sin bordes de resaltado
         cursor="hand2"
     )
     generate_button.pack(side=tk.LEFT, padx=(0, 8))
     ToolTip(generate_button, "Generar nueva contraseña")
-    
+
+    # Botón para copiar al portapapeles (solo ícono)
     copy_button = tk.Button(
         button_frame, 
-        text="📋",
+        text="Copy",
         command=lambda: copy_to_clipboard_compact(root, password_display.get(), status_label),
-        bg=COLOR_PRIMARY_BG, 
-        fg=COLOR_TEXT_FG,
+        bg=COLOR_PRIMARY_BG,  # Fondo igual al fondo de la interfaz
+        fg=COLOR_TEXT_FG, # Texto del botón
         font=("Arial", 14),
-        relief=tk.FLAT, 
-        activebackground=COLOR_SECONDARY_BG, 
-        activeforeground=COLOR_ACCENT,
-        borderwidth=0,
-        highlightthickness=0,
-        width=3,
-        height=1,
+        relief=tk.FLAT,  # Sin relieve
+        activebackground=COLOR_PRIMARY_BG,  # Fondo activo igual al fondo de la interfaz
+        activeforeground=COLOR_TEXT_FG,
+        borderwidth=0,  # Sin bordes
+        highlightthickness=0,  # Sin bordes de resaltado
         cursor="hand2"
     )
     copy_button.pack(side=tk.LEFT)
